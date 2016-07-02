@@ -14,7 +14,7 @@ switch(liriOperation) {
 	case "spotify-this-song":
 		var spotifySongArgs = process.argv;
 		var song = "";
-
+		//using the same process for omdb api, but this one requires a space for songs with more than one word.  The omdb api needs a '+'.  Need to refactor later.
 		if (process.argv[3]) {
 			for (var i = 3; i < spotifySongArgs.length; i++) {
 				if (i > 3 && i < spotifySongArgs.length) {
@@ -26,7 +26,7 @@ switch(liriOperation) {
 		} else {
 			song = "What's My Age Again";
 		}
-		getSpotifyInfo();
+		getSpotifyInfo(song);
 		break;
 	case "movie-this":
 		var movieTitleArgs = process.argv;
@@ -55,6 +55,7 @@ switch(liriOperation) {
 function getTweets() {
 	var keys = twitterKeys.twitterKeys;
 	var screenName = {screen_name: 'brewrhino', count: 20};
+	var addContent = "";
 
 	var client = new twitter(
 		keys
@@ -67,18 +68,23 @@ function getTweets() {
 			console.log(tweets[i].text);
 			console.log(tweets[i].created_at);
 			console.log('================================');
+			fs.appendFile('log.txt', (i + 1) + "\n" + tweets[i].text + "\n" + tweets[i].created_at + "\n" + "===============================\n", function(err) {
+				if (err) {
+					console.log(err);
+				} 
+			})
 		}
+		console.log("Your tweets added to log.txt!");
 	});
 }
 
-function getSpotifyInfo() {
+function getSpotifyInfo(userInput) {
 
-	spotify.search({type: 'track', query: song}, function(err, data) {
+	spotify.search({type: 'track', query: userInput}, function(err, data) {
 		if (err) {
 			console.log("Error occurred: " + err);
 			return;
 		}
-		//console.log(data.tracks.items.length);
 		for (var i = 0; i < data.tracks.items.length; i++) {
 			console.log(i + 1);
 			console.log("Artist: " + data.tracks.items[i].artists[0].name);
@@ -86,14 +92,19 @@ function getSpotifyInfo() {
 			console.log("Preview link: " + data.tracks.items[i].preview_url);
 			console.log("Album: " + data.tracks.items[i].album.name);
 			console.log("==============================")
-
+			fs.appendFile('log.txt', "Artist: " + data.tracks.items[i].artists[0].name + "\nSong name: " + data.tracks.items[i].name + "\nPreview link: " + data.tracks.items[i].preview_url + "\nAlbum: " + data.tracks.items[i].album.name + "\n==============================\n\n", function(err) {
+				if (err) {
+					console.log(err);
+				}
+			}) 
 		}
+		console.log("Spotify data added to log.txt!");
 	});
 }
 
 function getOMDBInfo(userInput) {
 
-	var queryUrl = 'http://www.omdbapi.com/?t=' + movieTitle + "&tomatoes=true";
+	var queryUrl = 'http://www.omdbapi.com/?t=' + userInput + "&tomatoes=true";
 
 	request(queryUrl, function(error, response, body) {
 		if (!error && response.statusCode == 200) {
@@ -107,6 +118,12 @@ function getOMDBInfo(userInput) {
 			console.log("Rotten Tomatoes Rating:  " + data.tomatoRating);
 			console.log("Rotten Tomatoes URL: " + data.tomatoURL);
 		}
+		fs.appendFile('log.txt',"Movie Info" + "\nTitle: " + data.Title + "\nRelease Year: " + data.Year + "\nIMDB Rating: " + data.imdbRating + "\nCountry: " + data.Country + "\nPlot: " + data.Plot + "\nActors " + data.Actors + "\nRotten Tomatoes Rating: " + data.tomatoRating + "\nRotten Tomatoes URL: " + data.tomatoURL + "\n\n", function(err) {
+			if (err) {
+				console.log(err);
+			}
+		})
+		console.log("Movie data added to log.txt!");
 	});
 }
 
@@ -115,6 +132,7 @@ function readFileCommand() {
 		var dataArr = data.split(',');
 		var liriOperation = dataArr[0];
 		var userInput = dataArr[1];
+		console.log(userInput);
 
 		switch(liriOperation) {
 			case('my-tweets'):
