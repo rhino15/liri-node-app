@@ -68,6 +68,7 @@ function getTweets() {
 			console.log(tweets[i].text);
 			console.log(tweets[i].created_at);
 			console.log('================================');
+			//append the tweets to log.txt
 			fs.appendFile('log.txt', (i + 1) + "\n" + tweets[i].text + "\n" + tweets[i].created_at + "\n" + "===============================\n", function(err) {
 				if (err) {
 					console.log(err);
@@ -85,13 +86,15 @@ function getSpotifyInfo(userInput) {
 			console.log("Error occurred: " + err);
 			return;
 		}
+		//loop throgh the data from the spotify ajax call
 		for (var i = 0; i < data.tracks.items.length; i++) {
 			console.log(i + 1);
 			console.log("Artist: " + data.tracks.items[i].artists[0].name);
 			console.log("Song name: " + data.tracks.items[i].name);
 			console.log("Preview link: " + data.tracks.items[i].preview_url);
 			console.log("Album: " + data.tracks.items[i].album.name);
-			console.log("==============================")
+			console.log("==============================");
+			//append spotify info into log.txt
 			fs.appendFile('log.txt', "Artist: " + data.tracks.items[i].artists[0].name + "\nSong name: " + data.tracks.items[i].name + "\nPreview link: " + data.tracks.items[i].preview_url + "\nAlbum: " + data.tracks.items[i].album.name + "\n==============================\n\n", function(err) {
 				if (err) {
 					console.log(err);
@@ -118,6 +121,7 @@ function getOMDBInfo(userInput) {
 			console.log("Rotten Tomatoes Rating:  " + data.tomatoRating);
 			console.log("Rotten Tomatoes URL: " + data.tomatoURL);
 		}
+		//append movie info into log.txt
 		fs.appendFile('log.txt',"Movie Info" + "\nTitle: " + data.Title + "\nRelease Year: " + data.Year + "\nIMDB Rating: " + data.imdbRating + "\nCountry: " + data.Country + "\nPlot: " + data.Plot + "\nActors " + data.Actors + "\nRotten Tomatoes Rating: " + data.tomatoRating + "\nRotten Tomatoes URL: " + data.tomatoURL + "\n\n", function(err) {
 			if (err) {
 				console.log(err);
@@ -128,6 +132,7 @@ function getOMDBInfo(userInput) {
 }
 
 function readFileCommand() {
+	//reads the file from random.txt, and parses the info
 	fs.readFile("random.txt", 'utf8', function(error, data) {
 		var dataArr = data.split(',');
 		var liriOperation = dataArr[0];
