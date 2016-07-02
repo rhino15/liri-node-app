@@ -132,7 +132,6 @@ function readFileCommand() {
 		var dataArr = data.split(',');
 		var liriOperation = dataArr[0];
 		var userInput = dataArr[1];
-		console.log(userInput);
 
 		switch(liriOperation) {
 			case('my-tweets'):
